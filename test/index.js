@@ -2,7 +2,7 @@ import test from 'ava';
 import fs from 'fs-extra';
 import path from 'path';
 
-import templateDir from '../lib';
+import scaffold from '../lib';
 
 test.before(() => {
   const cwd = process.cwd();
@@ -35,7 +35,7 @@ test('TEMPLATE DIR | recursively', (t) => {
     age: '34',
   };
 
-  templateDir({ source, destination, onlyFiles }, data);
+  scaffold({ source, destination, onlyFiles }, data);
 
   const valueDestinationDir = fs.readdirSync(destination);
   const expectedDestinationDir = [
@@ -95,7 +95,7 @@ test('TEMPLATE DIR | files only', (t) => {
     age: '34',
   };
 
-  templateDir({ source, destination, onlyFiles }, data);
+  scaffold({ source, destination, onlyFiles }, data);
 
   const valueDestinationDir = fs.readdirSync(destination);
   const expectedDestinationDir = [
@@ -115,7 +115,7 @@ test('TEMPLATE DIR | throws', (t) => {
   const wrongSource = path.join(cwd, 'test', 'fixtures', 'sourc');
   const destination = path.join(cwd, 'test', 'fixtures', 'dest');
 
-  t.throws(() => templateDir({ source: wrongSource, destination }, {}));
+  t.throws(() => scaffold({ source: wrongSource, destination }, {}));
 });
 
 test.serial('TEMPLATE DIR | recursively with default values', async (t) => {
@@ -125,7 +125,7 @@ test.serial('TEMPLATE DIR | recursively with default values', async (t) => {
 
   await process.chdir(source);
 
-  templateDir();
+  scaffold();
 
   const valueDestinationDir = fs.readdirSync(destination);
   const expectedDestinationDir = [
@@ -191,7 +191,7 @@ test('TEMPLATE DIR | recursively, with excluding dir-2, dir-4', (t) => {
     age: '34',
   };
 
-  templateDir({ source, destination, onlyFiles, exclude }, data);
+  scaffold({ source, destination, onlyFiles, exclude }, data);
 
   const valueDestinationDir = fs.readdirSync(destination);
   const expectedDestinationDir = [

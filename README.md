@@ -50,12 +50,12 @@ My name is {{name}} and I am {{age}} years old.
 The `scaffold-helper` module example **WITH** copying recursive all files and directories:
 
 ```js
-const templateDir = require('scaffold-helper'); // import templateDir from 'scaffold-helper';
+const scaffold = require('scaffold-helper'); // import scaffold from 'scaffold-helper';
 
 // if we set onlyFiles to false it copies the complete directory tree
 // from 'source/directory' to 'destination/directory'
 // excluding 'dir-1'
-templateDir(
+scaffold(
   {
     source: 'source/directory',
     destination: 'destination/directory',
@@ -95,11 +95,11 @@ My name is Cliff and I am 25 years old.
 The `scaffold-helper` module example **WITHOUT** copying recursive all files and directories:
 
 ```js
-const templateDir = require('scaffold-helper'); // import templateDir from 'scaffold-helper';
+const scaffold = require('scaffold-helper'); // import scaffold from 'scaffold-helper';
 
 // if we set onlyFiles to true it copies only the files
 // within 'source/directory' to 'destination/directory'
-templateDir(
+scaffold(
   {
     source: 'source/directory',
     destination: 'destination/directory',
@@ -131,4 +131,4 @@ My name is Cliff and I am 25 years old.
 
 ## LICENSE
 
-MIT © Cliff cliffpyles
+MIT © Cliff Pyles
