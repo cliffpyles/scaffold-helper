@@ -246,7 +246,7 @@ test('TEMPLATE DIR | custom template variables', (t) => {
     source,
     destination,
     onlyFiles,
-    variableRegex
+    variableRegex,
   }, data);
 
   const valueDestinationDir = fs.readdirSync(destination);
