@@ -2,7 +2,7 @@ import test from 'ava';
 import fs from 'fs-extra';
 import path from 'path';
 
-import scaffold from '../lib';
+import scaffold, { getProcessedPath, getRenderedTemplate } from '../lib';
 
 test.before(() => {
   const cwd = process.cwd();
@@ -28,7 +28,7 @@ test.after.always(() => {
   fs.removeSync(destinationFixturesCustom);
 });
 
-test('TEMPLATE DIR | recursively', (t) => {
+test('scaffold | creates resources recursively', (t) => {
   const cwd = process.cwd();
   const source = path.join(cwd, 'test', 'fixtures', 'source');
   const destination = path.join(cwd, 'test', 'fixtures', 'destination1');
@@ -89,7 +89,7 @@ test('TEMPLATE DIR | recursively', (t) => {
   t.is(valueTemplate1, expectedTemplate1);
 });
 
-test('TEMPLATE DIR | files only', (t) => {
+test('scaffold | creates files only', (t) => {
   const source = path.join('test', 'fixtures', 'source');
   const destination = path.join('test', 'fixtures', 'destination2');
   const onlyFiles = true;
@@ -114,7 +114,7 @@ test('TEMPLATE DIR | files only', (t) => {
   t.is(valueTemplate1, expectedTemplate1);
 });
 
-test('TEMPLATE DIR | throws', (t) => {
+test('scaffold | handles errors', (t) => {
   const cwd = process.cwd();
   const wrongSource = path.join(cwd, 'test', 'fixtures', 'sourc');
   const destination = path.join(cwd, 'test', 'fixtures', 'dest');
@@ -122,7 +122,7 @@ test('TEMPLATE DIR | throws', (t) => {
   t.throws(() => scaffold({ source: wrongSource, destination }, {}));
 });
 
-test.serial('TEMPLATE DIR | recursively with default values', async (t) => {
+test.serial('scaffold | creates resources recursively with default values', async (t) => {
   const cwd = process.cwd();
   const source = path.join(cwd, 'test', 'fixtures', 'source');
   const destination = path.join(source, 'destination');
@@ -183,7 +183,7 @@ test.serial('TEMPLATE DIR | recursively with default values', async (t) => {
   await process.chdir(cwd);
 });
 
-test('TEMPLATE DIR | recursively, with excluding dir-2, dir-4', (t) => {
+test('scaffold | excludes directories from creation', (t) => {
   const cwd = process.cwd();
   const source = path.join(cwd, 'test', 'fixtures', 'source');
   const destination = path.join(cwd, 'test', 'fixtures', 'destination4');
@@ -231,14 +231,16 @@ test('TEMPLATE DIR | recursively, with excluding dir-2, dir-4', (t) => {
   t.is(valueTemplate1, expectedTemplate1);
 });
 
-test('TEMPLATE DIR | custom template variables', (t) => {
+test('scaffold | injects template data into generated resources', (t) => {
   const source = path.join('test', 'fixtures', 'custom');
   const destination = path.join('test', 'fixtures', 'custom-destination');
   const onlyFiles = true;
   const data = {
     type: 'example',
     name: 'Cliff',
-    age: '34',
+    age() {
+      return '34';
+    },
   };
   const variableRegex = /\[\[\s?(.*?)\s?\]\]/g;
 
@@ -259,4 +261,24 @@ test('TEMPLATE DIR | custom template variables', (t) => {
 
   t.deepEqual(valueDestinationDir, expectedDestinationDir);
   t.is(valueTemplate1, expectedTemplate1);
+});
+
+test('getProcessedPath | returns correct path', (t) => {
+  const processedPath = getProcessedPath('/example/__projectName__/src/components/__componentType__', {
+    projectName: 'abc-app',
+    componentType: 'Alert',
+  });
+  t.is(processedPath, '/example/abc-app/src/components/Alert');
+});
+
+test('getRenderedTemplate | returns the correct output', t => {
+  const variableRegex = /\[\[\s?(.*?)\s?\]\]/g;
+  const renderedTemplate = getRenderedTemplate(
+    'Hello, [[name]]!',
+    {
+      name: 'World',
+    },
+    variableRegex,
+  );
+  t.is(renderedTemplate, 'Hello, World!');
 });
